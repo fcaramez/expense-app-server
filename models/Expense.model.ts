@@ -3,7 +3,7 @@ import { model, Schema } from "mongoose";
 interface IExpenseModel {}
 
 const expenseSchema: Schema = new Schema<IExpenseModel>({
-  expenseType: {
+  source: {
     type: String,
     enum: ["income", "expense"],
     required: true,
@@ -12,6 +12,28 @@ const expenseSchema: Schema = new Schema<IExpenseModel>({
     type: String,
     required: true,
     trim: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: [
+      "Household",
+      "Technology",
+      "Work",
+      "Salary",
+      "Allowance",
+      "Transportation",
+      "Entertainment",
+      "Going Out",
+      "Other",
+    ],
+  },
+  date: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

@@ -4,6 +4,7 @@ interface IUserModel {
   username?: string | object;
   email: string | object;
   password: string | object;
+  budget: object;
   expenses: Array<any>;
 }
 
@@ -25,6 +26,10 @@ const userSchema: Schema = new Schema<IUserModel>({
   password: {
     type: String,
     required: true,
+  },
+  budget: {
+    type: Number,
+    default: 0,
   },
   expenses: [
     {
