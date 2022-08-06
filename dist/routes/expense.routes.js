@@ -28,6 +28,7 @@ router.post("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, v
     try {
         let { source, name, price, type, date } = req.body;
         const { userId } = req.params;
+        let user = yield User.findById(userId);
         if (source === "expense") {
             let createdExpense = yield Expense.create({
                 source,
@@ -38,12 +39,13 @@ router.post("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, v
             });
             let newUser = yield User.findByIdAndUpdate(userId, {
                 $push: {
-                    expenses: createdExpense,
+                    expenses: createdExpense._id,
                 },
+                budget: user.budget + createdExpense.price,
             }, { new: true }).populate("expenses");
-            res.status(200).json(newUser.expenses);
+            return res.status(200).json(newUser.expenses);
         }
-        else {
+        if (source === "income") {
             let createdExpense = yield Expense.create({
                 source,
                 name,
@@ -53,14 +55,32 @@ router.post("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, v
             });
             let newUser = yield User.findByIdAndUpdate(userId, {
                 $push: {
-                    expenses: createdExpense,
+                    expenses: createdExpense._id,
                 },
+                budget: user.budget + createdExpense.price,
             }, { new: true }).populate("expenses");
-            res.status(200).json(newUser.expenses);
+            return res.status(200).json(newUser.expenses);
         }
     }
     catch (error) {
         res.status(300).json({ errorMessage: "Error creating expense!" });
+    }
+}));
+router.delete("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { expenseId, userId } = req.params;
+        let deletedExpense = yield Expense.findByIdAndRemove(expenseId);
+        let user = yield User.findById(userId).populate("expenses");
+        yield User.findByIdAndUpdate(userId, {
+            $pull: {
+                expenses: expenseId,
+            },
+            budget: user.budget - deletedExpense.price,
+        });
+        res.status(200).json({ message: "Expense deleted successfully" });
+    }
+    catch (error) {
+        return res.status(200).json({ errorMessage: "Error deleting expense" });
     }
 }));
 module.exports = router;
