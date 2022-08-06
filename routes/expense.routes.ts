@@ -1,7 +1,10 @@
+import IUserModel from "../custom";
+import IExpenseModel from "../custom";
+import { Model } from "mongoose";
 const router: any = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
-const Expense: any = require("../models/Expense.model");
-const User: any = require("../models/User.model");
+const Expense: Model<IExpenseModel> = require("../models/Expense.model");
+const User: Model<IUserModel> = require("../models/User.model");
 
 router.get(
   "/expenses/:userId",
@@ -151,11 +154,10 @@ router.delete(
       let user = await User.findById(userId).populate("expenses");
 
       await User.findByIdAndUpdate(userId, {
-        $pull: {
-          expenses: expenseId,
-        },
         budget: user.budget - deletedExpense.price,
       });
+
+      await User.deleteMany({ expenses: expenseId });
 
       res.status(200).json({ message: "Expense deleted successfully" });
     } catch (error) {

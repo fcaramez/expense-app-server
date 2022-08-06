@@ -1,12 +1,5 @@
-import { model, Schema } from "mongoose";
-
-interface IUserModel {
-  username?: string | object;
-  email: string | object;
-  password: string | object;
-  budget: object;
-  expenses: Array<any>;
-}
+import { model, ObjectId, Schema } from "mongoose";
+import IUserModel from "../custom";
 
 const userSchema: Schema = new Schema<IUserModel>({
   username: {

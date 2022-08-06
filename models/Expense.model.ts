@@ -1,6 +1,5 @@
 import { model, Schema } from "mongoose";
-
-interface IExpenseModel {}
+import IExpenseModel from "../custom";
 
 const expenseSchema: Schema = new Schema<IExpenseModel>({
   source: {
