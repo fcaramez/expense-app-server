@@ -1,9 +1,7 @@
-import { ObjectId } from "mongoose";
 declare namespace Express {
   export interface Request {
     user?: object;
-    session?: object;
-    file?: File | any;
+    session?: any;
     payload?: object | any;
   }
   export interface Body {

@@ -35,7 +35,7 @@ module.exports = (app: Application) => {
     })
   );
 
-  app.use((req: Request, res: Response, next: NextFunction) => {
+  app.use((req: any, res: Response, next: NextFunction) => {
     req.user = req.session.user || null;
     next();
   });

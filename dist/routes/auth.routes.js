@@ -59,9 +59,7 @@ router.post("/signup", (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         }
         const repeatUsername = yield User.findOne({ username });
         if (repeatUsername) {
-            return res
-                .status(400)
-                .json({ errorMessage: "Username already taken!" });
+            return res.status(400).json({ errorMessage: "Username already taken!" });
         }
         const salt = yield bcrypt.genSalt(saltRounds);
         const hashedPassword = yield bcrypt.hash(password, salt);
