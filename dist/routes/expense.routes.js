@@ -66,6 +66,58 @@ router.post("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, v
         res.status(300).json({ errorMessage: "Error creating expense!" });
     }
 }));
+router.put("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { expenseId, userId } = req.params;
+        const { source, name, price, type, date } = req.body;
+        let user = yield User.findById(userId).populate("expenses");
+        if (source === "expense") {
+            yield Expense.findByIdAndUpdate(expenseId, {
+                source,
+                name,
+                price: price * -1,
+                type,
+                date,
+            }, { new: true });
+            let expenses = user.expenses.map((el) => el.price);
+            yield User.findByIdAndUpdate(userId, {
+                budget: {
+                    $reduce: {
+                        input: expenses,
+                        initialValue: user.budget,
+                    },
+                },
+            });
+            return res
+                .status(200)
+                .json({ message: "Expense updated Successfully!" });
+        }
+        if (source === "income") {
+            yield Expense.findByIdAndUpdate(expenseId, {
+                source,
+                name,
+                price,
+                type,
+                date,
+            });
+            let expenses = user.expenses.map((el) => el.price);
+            yield User.findByIdAndUpdate(userId, {
+                budget: {
+                    $reduce: {
+                        input: expenses,
+                        initialValue: user.budget,
+                    },
+                },
+            });
+            return res
+                .status(200)
+                .json({ message: "Expense updated Successfully!" });
+        }
+    }
+    catch (error) {
+        return res.status(300).json({ errorMessage: "Error updating expense" });
+    }
+}));
 router.delete("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { expenseId, userId } = req.params;

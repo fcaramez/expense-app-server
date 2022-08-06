@@ -79,6 +79,72 @@ router.post(
   }
 );
 
+router.put(
+  "/expense/:expenseId/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { expenseId, userId } = req.params;
+      const { source, name, price, type, date } = req.body;
+      let user = await User.findById(userId).populate("expenses");
+
+      if (source === "expense") {
+        await Expense.findByIdAndUpdate(
+          expenseId,
+          {
+            source,
+            name,
+            price: price * -1,
+            type,
+            date,
+          },
+          { new: true }
+        );
+
+        let expenses = user.expenses.map((el: any) => el.price);
+
+        await User.findByIdAndUpdate(userId, {
+          budget: {
+            $reduce: {
+              input: expenses,
+              initialValue: user.budget,
+            },
+          },
+        });
+
+        return res
+          .status(200)
+          .json({ message: "Expense updated Successfully!" });
+      }
+      if (source === "income") {
+        await Expense.findByIdAndUpdate(expenseId, {
+          source,
+          name,
+          price,
+          type,
+          date,
+        });
+
+        let expenses = user.expenses.map((el) => el.price);
+
+        await User.findByIdAndUpdate(userId, {
+          budget: {
+            $reduce: {
+              input: expenses,
+              initialValue: user.budget,
+            },
+          },
+        });
+
+        return res
+          .status(200)
+          .json({ message: "Expense updated Successfully!" });
+      }
+    } catch (error) {
+      return res.status(300).json({ errorMessage: "Error updating expense" });
+    }
+  }
+);
+
 router.delete(
   "/expense/:expenseId/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
