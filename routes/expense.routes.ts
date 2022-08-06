@@ -9,7 +9,7 @@ router.get(
     try {
       const { userId } = req.params;
 
-      let data = await User.findById(userId);
+      let data = await User.findById(userId).populate("expenses");
 
       res.status(200).json(data.expenses);
     } catch (error: any) {
@@ -85,7 +85,6 @@ router.put(
     try {
       const { expenseId, userId } = req.params;
       const { source, name, price, type, date } = req.body;
-      let user = await User.findById(userId).populate("expenses");
 
       if (source === "expense") {
         await Expense.findByIdAndUpdate(
@@ -99,16 +98,15 @@ router.put(
           },
           { new: true }
         );
+        let user = await User.findById(userId).populate("expenses");
 
-        let expenses = user.expenses.map((el: any) => el.price);
+        let sum: Number = 0;
+        user.expenses.map((el: any) => {
+          return (sum += el.price);
+        });
 
         await User.findByIdAndUpdate(userId, {
-          budget: {
-            $reduce: {
-              input: expenses,
-              initialValue: user.budget,
-            },
-          },
+          budget: sum,
         });
 
         return res
@@ -116,7 +114,9 @@ router.put(
           .json({ message: "Expense updated Successfully!" });
       }
       if (source === "income") {
-        await Expense.findByIdAndUpdate(expenseId, {
+        let user = await User.findById(userId).populate("expenses");
+
+        let oldPrice = await Expense.findByIdAndUpdate(expenseId, {
           source,
           name,
           price,
@@ -124,16 +124,13 @@ router.put(
           date,
         });
 
-        let expenses = user.expenses.map((el) => el.price);
-
-        await User.findByIdAndUpdate(userId, {
-          budget: {
-            $reduce: {
-              input: expenses,
-              initialValue: user.budget,
-            },
+        await User.findByIdAndUpdate(
+          user._id,
+          {
+            budget: user.budget - oldPrice.price + price,
           },
-        });
+          { new: true }
+        );
 
         return res
           .status(200)

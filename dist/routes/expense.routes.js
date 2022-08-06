@@ -15,7 +15,7 @@ const User = require("../models/User.model");
 router.get("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        let data = yield User.findById(userId);
+        let data = yield User.findById(userId).populate("expenses");
         res.status(200).json(data.expenses);
     }
     catch (error) {
@@ -70,7 +70,6 @@ router.put("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, 
     try {
         const { expenseId, userId } = req.params;
         const { source, name, price, type, date } = req.body;
-        let user = yield User.findById(userId).populate("expenses");
         if (source === "expense") {
             yield Expense.findByIdAndUpdate(expenseId, {
                 source,
@@ -79,36 +78,30 @@ router.put("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, 
                 type,
                 date,
             }, { new: true });
-            let expenses = user.expenses.map((el) => el.price);
+            let user = yield User.findById(userId).populate("expenses");
+            let sum = 0;
+            user.expenses.map((el) => {
+                return (sum += el.price);
+            });
             yield User.findByIdAndUpdate(userId, {
-                budget: {
-                    $reduce: {
-                        input: expenses,
-                        initialValue: user.budget,
-                    },
-                },
+                budget: sum,
             });
             return res
                 .status(200)
                 .json({ message: "Expense updated Successfully!" });
         }
         if (source === "income") {
-            yield Expense.findByIdAndUpdate(expenseId, {
+            let user = yield User.findById(userId).populate("expenses");
+            let oldPrice = yield Expense.findByIdAndUpdate(expenseId, {
                 source,
                 name,
                 price,
                 type,
                 date,
             });
-            let expenses = user.expenses.map((el) => el.price);
-            yield User.findByIdAndUpdate(userId, {
-                budget: {
-                    $reduce: {
-                        input: expenses,
-                        initialValue: user.budget,
-                    },
-                },
-            });
+            yield User.findByIdAndUpdate(user._id, {
+                budget: user.budget - oldPrice.price + price,
+            }, { new: true });
             return res
                 .status(200)
                 .json({ message: "Expense updated Successfully!" });
