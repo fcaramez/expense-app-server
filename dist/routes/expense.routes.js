@@ -114,12 +114,14 @@ router.put("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, 
 router.delete("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { expenseId, userId } = req.params;
-        let expenseToDelete = yield Expense.findById(expenseId);
+        let expenseToDelete = yield Expense.findByIdAndDelete(expenseId);
         let user = yield User.findById(userId).populate("expenses");
         yield User.findByIdAndUpdate(userId, {
             budget: user.budget - expenseToDelete.price,
+            expenses: user.expenses.filter((el) => {
+                return el._id !== expenseId;
+            }),
         });
-        yield Expense.deleteMany({ _id: expenseId });
         res.status(200).json({ message: "Expense deleted successfully" });
     }
     catch (error) {
