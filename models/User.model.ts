@@ -4,6 +4,7 @@ interface IUserModel {
   username?: string | object;
   email: string | object;
   password: string | object;
+  expenses: Array<any>;
 }
 
 const userSchema: Schema = new Schema<IUserModel>({
@@ -11,6 +12,7 @@ const userSchema: Schema = new Schema<IUserModel>({
     type: String,
     required: true,
     unique: true,
+    trim: true,
   },
   email: {
     type: String,
@@ -18,11 +20,18 @@ const userSchema: Schema = new Schema<IUserModel>({
       "/^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:. [a-zA-Z0-9-]+)*$/",
     required: true,
     unique: true,
+    trim: true,
   },
   password: {
     type: String,
     required: true,
   },
+  expenses: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Expense",
+    },
+  ],
 });
 
 const User: object = model<IUserModel>("User", userSchema);
