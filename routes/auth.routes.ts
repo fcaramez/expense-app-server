@@ -1,17 +1,17 @@
-const router: Router = require("express").Router();
+const router: any = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
 import { Mongoose } from "mongoose";
 const User: any = require("../models/User.model");
 const bcrypt: any = require("bcryptjs");
 const jwt: any = require("jsonwebtoken");
-const { isAuthtenticated } = require("../middleware/jwt.middleware");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 const mongoose: Mongoose = require("mongoose");
 
 const saltRounds: Number = 10;
 
 router.get(
   "/verify",
-  isAuthtenticated,
+  isAuthenticated,
   (req: any, res: Response, next: NextFunction) => {
     try {
       res.status(200).json(req.payload);
@@ -147,6 +147,21 @@ router.post(
       return res.status(200).json({ authToken });
     } catch (error: any) {
       next(error);
+    }
+  }
+);
+
+router.get(
+  "/profile/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
+
+      let user = await User.findById(userId).populate("expenses");
+
+      res.status(200).json(user);
+    } catch (error) {
+      return res.status(400).json({ errorMessage: "Error retrieving user" });
     }
   }
 );

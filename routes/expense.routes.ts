@@ -1,45 +1,73 @@
-const router: Router = require("express").Router();
+const router: any = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
-import { userInfo } from "os";
 const Expense: any = require("../models/Expense.model");
 const User: any = require("../models/User.model");
 
 router.get(
-  "/expenses",
+  "/expenses/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let data = await Expense.find();
+      const { userId } = req.params;
 
-      res.status(200).json(data);
+      let data = await User.findById(userId);
+
+      res.status(200).json(data.expenses);
     } catch (error: any) {
-      res.status(404).json({ errorMessage: "Error retrieving your expenses!" });
-      next();
+      return res
+        .status(404)
+        .json({ errorMessage: "Error retrieving your expenses!" });
     }
   }
 );
 
 router.post(
-  "/expenses",
+  "/expenses/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { source, name, price, type, date } = req.body;
-      const { _id } = req.session.user;
+      let { source, name, price, type, date } = req.body;
+      const { userId } = req.params;
 
-      let createdExpense = await Expense.create({
-        source,
-        name,
-        price,
-        type,
-        date,
-      });
+      if (source === "expense") {
+        let createdExpense = await Expense.create({
+          source,
+          name,
+          price: price * -1,
+          type,
+          date,
+        });
 
-      await User.findByIdAndUpdate(_id, {
-        $push: {
-          expenses: createdExpense,
-        },
-      });
+        let newUser = await User.findByIdAndUpdate(
+          userId,
+          {
+            $push: {
+              expenses: createdExpense,
+            },
+          },
+          { new: true }
+        ).populate("expenses");
 
-      res.status(200);
+        res.status(200).json(newUser.expenses);
+      } else {
+        let createdExpense = await Expense.create({
+          source,
+          name,
+          price,
+          type,
+          date,
+        });
+
+        let newUser = await User.findByIdAndUpdate(
+          userId,
+          {
+            $push: {
+              expenses: createdExpense,
+            },
+          },
+          { new: true }
+        ).populate("expenses");
+
+        res.status(200).json(newUser.expenses);
+      }
     } catch (error) {
       res.status(300).json({ errorMessage: "Error creating expense!" });
     }

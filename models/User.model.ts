@@ -17,8 +17,7 @@ const userSchema: Schema = new Schema<IUserModel>({
   },
   email: {
     type: String,
-    match:
-      "/^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:. [a-zA-Z0-9-]+)*$/",
+    match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
     required: true,
     unique: true,
     trim: true,

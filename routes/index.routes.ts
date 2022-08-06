@@ -1,4 +1,4 @@
-const router = require("express").Router();
+const router: any = require("express").Router();
 import { Request, Response, NextFunction } from "express";
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
