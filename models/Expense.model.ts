@@ -36,6 +36,6 @@ const expenseSchema: Schema = new Schema<IExpenseModel>({
   },
 });
 
-const Expense: object = model<IExpenseModel>("Expense", expenseSchema);
+const Expense: any = model("Expense", expenseSchema);
 
 module.exports = Expense;
