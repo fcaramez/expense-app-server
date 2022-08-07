@@ -1,6 +1,6 @@
 require("dotenv/config");
 require("./db");
-import express, { Application, Router } from "express";
+import express, { Application } from "express";
 
 const app: Application = express();
 require("./config")(app);

@@ -1,10 +1,10 @@
-const router: any = require("express").Router();
+const router = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
 import { Mongoose } from "mongoose";
 const User: any = require("../models/User.model");
 const bcrypt: any = require("bcryptjs");
 const jwt: any = require("jsonwebtoken");
-const { isAuthenticated } = require("../middleware/jwt.middleware");
+const  isAuthenticated = require("../middleware/jwt.middleware");
 const mongoose: Mongoose = require("mongoose");
 
 const saltRounds: Number = 10;
@@ -122,7 +122,7 @@ router.post(
           .json({ errorMessage: "No user matches the provided email." });
       }
 
-      const comparePassword = bcrypt.compare(password, userFound.password);
+      const comparePassword = bcrypt.compareSync(password, userFound.password);
 
       if (!comparePassword) {
         return res.status(400).json({ errorMessage: "Wrong password" });

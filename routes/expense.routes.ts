@@ -1,13 +1,15 @@
 import IUserModel from "../custom";
 import IExpenseModel from "../custom";
 import { Model } from "mongoose";
-const router: any = require("express").Router();
+const router = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
 const Expense = require("../models/Expense.model");
 const User: Model<IUserModel> = require("../models/User.model");
+const  IsAuthenticated  = require("../middleware/jwt.middleware");
 
 router.get(
   "/expenses/:userId",
+  IsAuthenticated,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.params;
@@ -25,6 +27,7 @@ router.get(
 
 router.post(
   "/expenses/:userId",
+  IsAuthenticated,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       let { source, name, price, type, date } = req.body;
@@ -84,6 +87,8 @@ router.post(
 
 router.put(
   "/expense/:expenseId/:userId",
+  IsAuthenticated,
+
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { expenseId, userId } = req.params;
@@ -147,6 +152,7 @@ router.put(
 
 router.delete(
   "/expense/:expenseId/:userId",
+  IsAuthenticated,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { expenseId, userId } = req.params;

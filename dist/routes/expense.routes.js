@@ -12,7 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const router = require("express").Router();
 const Expense = require("../models/Expense.model");
 const User = require("../models/User.model");
-router.get("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const IsAuthenticated = require("../middleware/jwt.middleware");
+router.get("/expenses/:userId", IsAuthenticated, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
         let data = yield User.findById(userId).populate("expenses");
@@ -24,7 +25,7 @@ router.get("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, vo
             .json({ errorMessage: "Error retrieving your expenses!" });
     }
 }));
-router.post("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/expenses/:userId", IsAuthenticated, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let { source, name, price, type, date } = req.body;
         const { userId } = req.params;
@@ -66,7 +67,7 @@ router.post("/expenses/:userId", (req, res, next) => __awaiter(void 0, void 0, v
         res.status(300).json({ errorMessage: "Error creating expense!" });
     }
 }));
-router.put("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/expense/:expenseId/:userId", IsAuthenticated, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { expenseId, userId } = req.params;
         const { source, name, price, type, date } = req.body;
@@ -111,7 +112,7 @@ router.put("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, 
         return res.status(300).json({ errorMessage: "Error updating expense" });
     }
 }));
-router.delete("/expense/:expenseId/:userId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/expense/:expenseId/:userId", IsAuthenticated, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { expenseId, userId } = req.params;
         let expenseToDelete = yield Expense.findByIdAndDelete(expenseId);

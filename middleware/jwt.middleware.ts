@@ -20,5 +20,4 @@ function getTokenFromHeaders(req: Request) {
   return null;
 }
 
-module.exports = { isAuthenticated };
-
+module.exports = isAuthenticated;

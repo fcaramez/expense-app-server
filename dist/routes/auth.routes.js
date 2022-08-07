@@ -13,7 +13,7 @@ const router = require("express").Router();
 const User = require("../models/User.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { isAuthenticated } = require("../middleware/jwt.middleware");
+const isAuthenticated = require("../middleware/jwt.middleware");
 const mongoose = require("mongoose");
 const saltRounds = 10;
 router.get("/verify", isAuthenticated, (req, res, next) => {
@@ -104,7 +104,7 @@ router.post("/login", (req, res, next) => __awaiter(void 0, void 0, void 0, func
                 .status(400)
                 .json({ errorMessage: "No user matches the provided email." });
         }
-        const comparePassword = bcrypt.compare(password, userFound.password);
+        const comparePassword = bcrypt.compareSync(password, userFound.password);
         if (!comparePassword) {
             return res.status(400).json({ errorMessage: "Wrong password" });
         }
