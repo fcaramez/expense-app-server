@@ -5,18 +5,19 @@ const router = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
 const Expense = require("../models/Expense.model");
 const User: Model<IUserModel> = require("../models/User.model");
-const  IsAuthenticated  = require("../middleware/jwt.middleware");
 
 router.get(
   "/expenses/:userId",
-  IsAuthenticated,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.params;
 
       let data = await User.findById(userId).populate("expenses");
 
-      res.status(200).json(data.expenses);
+      let budget = data.budget;
+      let expenses = data.expenses;
+
+      res.status(200).json({ budget, expenses });
     } catch (error: any) {
       return res
         .status(404)
@@ -27,7 +28,6 @@ router.get(
 
 router.post(
   "/expenses/:userId",
-  IsAuthenticated,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       let { source, name, price, type, date } = req.body;
@@ -87,7 +87,6 @@ router.post(
 
 router.put(
   "/expense/:expenseId/:userId",
-  IsAuthenticated,
 
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -152,7 +151,6 @@ router.put(
 
 router.delete(
   "/expense/:expenseId/:userId",
-  IsAuthenticated,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { expenseId, userId } = req.params;
