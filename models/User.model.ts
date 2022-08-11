@@ -19,6 +19,11 @@ const userSchema: Schema = new Schema<IUserModel>({
     type: String,
     required: true,
   },
+  profilePicture: {
+    type: String,
+    default:
+      "https://imagens.brasil.elpais.com/resizer/-sq_qxO7YmGukKYkh1U6DCLYu78=/1200x0/cloudfront-eu-central-1.images.arcpublishing.com/prisa/LL3KKOVYQN5NFSMWTE4J3MD6ME.jpg",
+  },
   budget: {
     type: Number,
     default: 0,
@@ -27,6 +32,24 @@ const userSchema: Schema = new Schema<IUserModel>({
     {
       type: Schema.Types.ObjectId,
       ref: "Expense",
+    },
+  ],
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  following: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   ],
 });

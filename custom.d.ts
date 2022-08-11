@@ -1,3 +1,4 @@
+import { Schema } from "mongoose";
 
 declare namespace Express {
   export interface Request {
@@ -33,4 +34,15 @@ export default interface IUserModel {
   password: string | object;
   budget: number;
   expenses?: any[];
+  posts?: any[];
+  following?: any[];
+  followers?: any[];
+  profilePicture?: string;
+}
+
+export default interface IPostModel {
+  title: string;
+  content: string;
+  image: string;
+  author: Schema.Types.ObjectId;
 }
