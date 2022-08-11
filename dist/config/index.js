@@ -28,7 +28,7 @@ module.exports = (app) => {
             mongoUrl: consts_1.default,
         }),
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24 * 365,
+            maxAge: 1000 * 60 * 60 * 24 * 4,
             sameSite: "none",
             secure: process.env.NODE_ENV === "production",
         },
