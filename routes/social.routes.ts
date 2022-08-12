@@ -2,7 +2,6 @@ import IUserModel from "../custom";
 import IPostModel from "../custom";
 import { NextFunction, Response, Router, Request } from "express";
 import { Model, Schema } from "mongoose";
-import { nextTick } from "process";
 const router: Router = require("express").Router();
 const User: Model<IUserModel> = require("../models/User.model");
 const Post: Model<IPostModel> = require("../models/Post.model");

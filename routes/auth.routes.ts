@@ -12,7 +12,7 @@ const saltRounds: Number = 10;
 router.get(
   "/verify",
   isAuthenticated,
-  (req: any, res: Response, next: NextFunction) => {
+  (req: any, res: Response, _next: NextFunction) => {
     try {
       res.status(200).json(req.payload);
     } catch (error) {
@@ -21,7 +21,7 @@ router.get(
   }
 );
 
-router.post("/signup", async (req: any, res: Response, next: NextFunction) => {
+router.post("/signup", async (req: any, res: Response, _next: NextFunction) => {
   try {
     const { username, email, password, budget, expenses } = req.body;
 
@@ -148,7 +148,7 @@ router.post(
 
 router.get(
   "/profile/:userId",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { userId } = req.params;
 

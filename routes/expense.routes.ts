@@ -8,7 +8,7 @@ const User: Model<IUserModel> = require("../models/User.model");
 
 router.get(
   "/expenses/:userId",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { userId } = req.params;
 
@@ -28,7 +28,7 @@ router.get(
 
 router.post(
   "/expenses/:userId",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     try {
       let { source, name, price, type, date } = req.body;
       const { userId } = req.params;
@@ -88,7 +88,7 @@ router.post(
 router.put(
   "/expense/:expenseId/:userId",
 
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { expenseId, userId } = req.params;
       const { source, name, price, type, date } = req.body;
@@ -151,7 +151,7 @@ router.put(
 
 router.delete(
   "/expense/:expenseId/:userId",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { expenseId, userId } = req.params;
       let expenseToDelete = await Expense.findByIdAndDelete(expenseId);
