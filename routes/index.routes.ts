@@ -10,12 +10,12 @@ router.post(
   "/upload",
   fileUploader.single("image"),
   async (req: any, res: Response, next: NextFunction) => {
-    if(!req.file) {
-      next(new Error("No file uploaded!"))
-      return
+    if (!req.file) {
+      next(new Error("No file uploaded!"));
+      return;
     }
 
-    res.status(200).json({fileUrl: req.file.path})
+    res.status(200).json({ fileUrl: req.file.path });
   }
 );
 
