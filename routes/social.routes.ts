@@ -7,6 +7,46 @@ const User: Model<IUserModel> = require("../models/User.model");
 const Post: Model<IPostModel> = require("../models/Post.model");
 
 router.get(
+  "/users",
+  async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const allUsers = await User.find();
+
+      res.status(200).json(allUsers);
+    } catch (error) {
+      res.status(404).json({ errorMessage: "Error getting users!" });
+      next(error);
+    }
+  }
+);
+
+router.get(
+  "/user/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
+
+      const user = await User.findById(userId).populate(
+        "posts followers following"
+      );
+
+      const { username, profilePicture, followers, following, posts } = user;
+
+      res.status(200).json({
+        username,
+        profilePicture,
+        followers,
+        following,
+        posts,
+      });
+    } catch (error) {
+      res.status(404).json({ errorMessage: "Error getting the user" });
+      next(error);
+    }
+  }
+);
+
+router.get(
   "/posts",
   async (_req: Request, res: Response, _next: NextFunction) => {
     try {
@@ -23,7 +63,12 @@ router.post("/posts", async (req: any, res: Response, _next: NextFunction) => {
   try {
     const { title, content, image, author } = req.body;
 
-    const postCreated = await Post.create({ title, content, image, author });
+    const postCreated = await Post.create({
+      title,
+      content,
+      image,
+      author: author,
+    });
     await User.findByIdAndUpdate(author, {
       $push: {
         posts: postCreated._id,
@@ -42,9 +87,9 @@ router.put(
       const { postId } = req.params;
       const { title, content, image, author } = req.body;
 
-      const checkPost = await Post.findById(postId);
+      const checkPost: any = await Post.findById(postId).populate("author");
 
-      if (checkPost.author !== author) {
+      if (checkPost.author._id != author) {
         res.status(404).json({ errorMessage: "This is not your post!" });
         throw new Error("This is not your post!");
       }
@@ -76,7 +121,7 @@ router.delete(
 
       const updatedUserArray: Array<Schema.Types.ObjectId> = user.posts.filter(
         (el) => {
-          return el !== postId;
+          return el != postId;
         }
       );
 
@@ -85,6 +130,7 @@ router.delete(
       });
 
       await Post.findByIdAndDelete(postId);
+      res.status(200).json({ message: "Post deleted" });
     } catch (error) {
       next(error);
       return res.status(304).json({ errorMessage: "Error deleting Post" });
@@ -146,12 +192,12 @@ router.put(
       } else {
         const currentUserFollowing: Array<Schema.Types.ObjectId> =
           currentUser.following.filter((el) => {
-            return el._id !== userToUnfollow;
+            return el._id != userToUnfollow;
           });
 
         const unfollowUserArray: Array<Schema.Types.ObjectId> =
           unfollowedUser.followers.filter((el) => {
-            return el._id !== userInSession;
+            return el._id != userInSession;
           });
 
         await User.findByIdAndUpdate(userInSession, {

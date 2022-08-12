@@ -14,7 +14,11 @@ const postSchema: Schema = new Schema<IPostModel>({
   image: {
     type: String,
     default:
-      "https://imagens.brasil.elpais.com/resizer/-sq_qxO7YmGukKYkh1U6DCLYu78=/1200x0/cloudfront-eu-central-1.images.arcpublishing.com/prisa/LL3KKOVYQN5NFSMWTE4J3MD6ME.jpg",
+      "https://res.cloudinary.com/fcaramez/image/upload/v1660294578/expense-app/Nicolas_Cage_hdp7sn.webp",
+  },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
 });
 

@@ -152,7 +152,7 @@ router.get(
     try {
       const { userId } = req.params;
 
-      let user = await User.findById(userId).populate("expenses");
+      let user = await User.findById(userId).populate("expenses followers following posts");
 
       res.status(200).json(user);
     } catch (error) {
