@@ -1,9 +1,8 @@
 import IUserModel from "../custom";
-import IExpenseModel from "../custom";
 import { Model } from "mongoose";
 const router = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
-const Expense = require("../models/Expense.model");
+const Expense: any = "../models/Expense.model";
 const User: Model<IUserModel> = require("../models/User.model");
 
 router.get(

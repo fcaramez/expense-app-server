@@ -1,10 +1,11 @@
+import IUserModel from "../custom";
 const router = require("express").Router();
 import { Request, Response, NextFunction, Router } from "express";
-import { Mongoose } from "mongoose";
-const User: any = require("../models/User.model");
+import { Model, Mongoose } from "mongoose";
+const User: Model<IUserModel> = require("../models/User.model");
 const bcrypt: any = require("bcryptjs");
 const jwt: any = require("jsonwebtoken");
-const  isAuthenticated = require("../middleware/jwt.middleware");
+const isAuthenticated: Function = require("../middleware/jwt.middleware");
 const mongoose: Mongoose = require("mongoose");
 
 const saltRounds: Number = 10;
@@ -152,7 +153,9 @@ router.get(
     try {
       const { userId } = req.params;
 
-      let user = await User.findById(userId).populate("expenses followers following posts");
+      let user = await User.findById(userId).populate(
+        "expenses followers following posts"
+      );
 
       res.status(200).json(user);
     } catch (error) {
