@@ -24,7 +24,8 @@ router.get(
 
 router.post("/signup", async (req: any, res: Response, _next: NextFunction) => {
   try {
-    const { username, email, password, budget, expenses } = req.body;
+    const { username, email, password, budget, expenses, profilePicture } =
+      req.body;
 
     if (!username) {
       return res
@@ -79,6 +80,7 @@ router.post("/signup", async (req: any, res: Response, _next: NextFunction) => {
       password: hashedPassword,
       budget,
       expenses,
+      profilePicture: profilePicture,
     });
 
     req.session.user = user;
