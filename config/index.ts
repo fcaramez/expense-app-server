@@ -19,7 +19,7 @@ module.exports = (app: Application) => {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
-  app.use(
+  /* app.use(
     session({
       secret: process.env.SESSION_SECRET || "super secret key",
       resave: false,
@@ -33,7 +33,7 @@ module.exports = (app: Application) => {
         secure: process.env.NODE_ENV === "production",
       },
     })
-  );
+  ); */
 
   app.use((req: any, _res: Response, next: NextFunction) => {
     req.user = req.session.user || null;

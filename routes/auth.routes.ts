@@ -117,7 +117,9 @@ router.post(
           .json({ errorMessage: "Please provide your password" });
       }
 
-      const userFound = await User.findOne({ email });
+      const userFound = await User.findOne({ email }).populate(
+        "followers following expenses"
+      );
 
       if (!userFound) {
         return res
@@ -135,6 +137,9 @@ router.post(
         _id: userFound._id,
         username: userFound.username,
         email: userFound.email,
+        followers: userFound.followers,
+        following: userFound.following,
+        expenses: userFound.expenses,
       };
 
       const authToken: any = jwt.sign(payload, process.env.TOKEN_SECRET, {
@@ -155,9 +160,13 @@ router.get(
     try {
       const { userId } = req.params;
 
-      let user = await User.findById(userId).populate(
-        "expenses followers following posts"
-      );
+      let user = await User.findById(userId)
+        .populate("expenses")
+        .populate("following")
+        .populate("followers")
+        .populate("posts");
+
+      console.log(user);
 
       res.status(200).json(user);
     } catch (error) {
