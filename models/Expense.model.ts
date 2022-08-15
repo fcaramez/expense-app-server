@@ -34,6 +34,9 @@ const expenseSchema: Schema = new Schema<IExpenseModel>({
     type: Date,
     default: Date.now(),
   },
+  receipt: {
+    type: String,
+  },
 });
 
 const Expense: any = model("Expense", expenseSchema);

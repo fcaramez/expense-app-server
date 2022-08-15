@@ -27,6 +27,7 @@ export default interface IExpenseModel {
   price: number;
   type: String;
   date?: Date;
+  receipt: String;
 }
 export default interface IUserModel {
   username?: string | object;

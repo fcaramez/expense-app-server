@@ -30,7 +30,7 @@ router.post(
   "/expenses/:userId",
   async (req: Request, res: Response, _next: NextFunction) => {
     try {
-      let { source, name, price, type, date } = req.body;
+      let { source, name, price, type, date, receipt } = req.body;
       const { userId } = req.params;
 
       let user = await User.findById(userId);
@@ -42,6 +42,7 @@ router.post(
           price: price * -1,
           type,
           date,
+          receipt,
         });
 
         let newUser = await User.findByIdAndUpdate(
@@ -64,6 +65,7 @@ router.post(
           price,
           type,
           date,
+          receipt,
         });
 
         let newUser = await User.findByIdAndUpdate(
@@ -91,7 +93,7 @@ router.put(
   async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { expenseId, userId } = req.params;
-      const { source, name, price, type, date } = req.body;
+      const { source, name, price, type, date, receipt } = req.body;
 
       if (source === "expense") {
         await Expense.findByIdAndUpdate(
@@ -102,6 +104,7 @@ router.put(
             price: price * -1,
             type,
             date,
+            receipt,
           },
           { new: true }
         );
@@ -129,6 +132,7 @@ router.put(
           price,
           type,
           date,
+          receipt,
         });
 
         await User.findByIdAndUpdate(
