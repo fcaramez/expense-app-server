@@ -26,6 +26,20 @@ router.get(
   }
 );
 
+router.get(
+  "/expense/:expenseId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { expenseId } = req.params;
+      let expense = await Expense.findById(expenseId);
+
+      res.status(200).json(expense);
+    } catch (error) {
+      return res.status(404).json({ errorMessage: "Error getting expense" });
+    }
+  }
+);
+
 router.post(
   "/expenses/:userId",
   async (req: Request, res: Response, _next: NextFunction) => {
